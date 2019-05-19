@@ -1,0 +1,30 @@
+<html>
+<head>
+	<title>Siebel Expressions online beautifier</title>
+	<script src="http://xapuk.com/lib/jquery-3.3.1.min.js"></script>
+	<script src="https://cdn.rawgit.com/JacobLett/bootstrap4-latest/504729ba/bootstrap-4-latest.min.js"></script>
+	<script src="SiebelQueryLang.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
+	<script src="ExpBeauty.js"></script>
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.css" />
+	<link href="https://cdn.rawgit.com/JacobLett/bootstrap4-latest/master/bootstrap-4-latest.min.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+	<div id="ExpParserForm" class = "p-3 rounded border bg-light">
+		<h5 class="mb-3">Siebel Expressions online beautifier</h5>
+		<textarea id="ExpParserInput" style="width:100%" rows="5" class="form-control" placeholder="Paste a Siebel expression here ...">IIf(([Status] = LookupValue("STATUS_CD", "Active") OR [Status] = LookupValue("STATUS_CD", "In Progress") OR [Status] IS NULL) AND NOT [&Transaction] LIKE "Update", BCHasRows("Account","Account","[Id] = '" + InvokeService("Common Utilities", "GetVariable", "Name='Account Id'","Value") + "'", "AllView"), (Today()-[Created])/7 > LookupValue("CONSTANTS","Expiry Weeks") )</textarea>
+		<button id="ExpParser" class="btn btn-secondary my-3 w-100">Parse / Format</button>
+		<textarea id="ExpParserOutput" style="width:100%" rows="15" class="form-control" placeholder="Result" wrap="off"> </textarea>
+	</div>
+	<style type='text/css'>
+		#ExpParserOutput {
+			overflow: scroll;
+			overflow-x: scroll;
+			overflow: -moz-scrollbars-horizontal;
+		}
+		#ExpParserForm {
+			background:ghostwhite;
+		}
+	</style>
+</body>
+</html>

@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <title>Siebel login page</title>
+    </head>
+    <body>
+        <div id="msg" class = "row"></div>
+        <div> <!-- your table with links (start) -->
+            <div class = "row"> <!-- first sample has the simplest setup when all params are defined at anchor level -->
+                <p>BLD</p> <!-- environment name -->
+                <div class = "col">
+                    <a href="#" url = "http://devwebserver/fins_enu" usr="DEV_USR1" pwd="123pas"><b>fins_enu</b></a>
+                </div>
+                <div class = "col" url = "app2">
+                    <a href="#" url = "http://devwebserver/app2_enu" usr="DEV_USR2" pwd="pas123"><b>Application2</b></a>
+                </div>
+            </div>
+            <div class = "row" url = "http://testwebserver/"> <!-- second example has the same webserver for all applications -->
+                <p>TST</p>
+                <div class = "col" url = "fins_enu"> <!-- url attrib here represents an application part and it is got concatenated with a webserver url to become http://testwebserver/fins_enu -->
+                    <a href="#" usr="DEV_USR" pwd="pas123"><b>fins_enu</b></a> 
+                </div>
+                <div class = "col" url = "app2" pwd="pas123"> <!-- here we are using same password across all users -->
+                    <p><b>Application2</b></p>
+                    <a href="#" usr="REP1">User1 (salesrep)</a>
+                    <a href="#" usr="REP2">User2 (salesrep)</a>
+                    <a href="#" usr="SUP1">User3 (supervisor)</a>
+                </div>
+                <div class = "col" url = "app3" pwd="pas123">
+                    <a href="#" usr='*'><b>Application3</b></a> <!-- usr='*' opens a login page for you to manually enter credentials -->
+                    <a href="#" usr="REP1">User1 (salesrep)</a>
+                    <a href="#" usr="SUP1">User2 (supervisor)</a>
+                </div>
+            </div>
+            <div class = "row" url = "http://prodserver.com/" usr = "PROD_USR" pwd = "pwd123#"> <!-- in the last example all the parameters are defined at top level -->
+                <p>PRD</p>
+                <div class = "col" url="fins_enu">
+                    <a href="#" usr="*"><b>fins_enu</b></a>
+                    <a href="#">PROD_USR</a> <!-- in that case we will use PROD_USR to log in -->
+                    <a href="#" usr="PROD_USR2">PROD_USR2</a> <!-- replacing user name -->
+                </div>
+                <div class = "col" url = "app2">
+                    <a href="#" usr="*"><b>Application2</b></a>
+                    <a href="#" pwd="123pwd">PROD_USR</a> <!-- replacing password to log in -->
+                </div>
+            </div>
+        </div> <!-- your table with links (end) --> 
+        <form name="SWEEntryForm" method="post">
+            <input type="hidden" name="SWEUserName">
+            <input type="hidden" name="SWEPassword">
+            <input type="hidden" name="SWEFo" value="SWEEntryForm">
+            <input type="hidden" name="SWENeedContext" value="false">
+            <input type="hidden" name="SWENoHttpRedir" value="false">
+            <input type="hidden" name="SWECmd" value="ExecuteLogin">
+            <input type="hidden" name="W" value="t">
+            <input type="hidden" name="SWESPNR" value="">
+            <input type="hidden" name="SWESPNH" value="">
+            <input type="hidden" name="SWEH" value="">
+            <input type="hidden" name="SWEC" value="0">
+            <input type="hidden" name="SWEW" value="">
+            <input type="hidden" name="SWEBID" value="-1">
+            <input type="hidden" name="SRN" value="">
+            <input type="hidden" name="SWETS" value="">
+            <input type="hidden" name="SWEWN" value="">
+        </form>
+
+        <script>
+            function SWEExecuteLogin(scope)
+            {
+                var url = "",usr = "" ,pwd = "";
+
+                // search for url, usr, pwd
+                while (scope && (usr == "" || pwd == "" || url.indexOf(":") == -1))
+                {
+                    if (scope.attributes["url"])
+                        url = scope.attributes["url"].value + url; // concatenating url from top to bottom
+                    if (usr == "" && scope.attributes["usr"])
+                        usr = scope.attributes["usr"].value; // user and password - deepest level have higher priority
+                    if (pwd == "" && scope.attributes["pwd"])
+                        pwd = scope.attributes["pwd"].value;
+
+                    scope = scope.parentElement;
+                }
+
+                // submit form
+                if (usr == "*"){
+                    document.location = url; // if usr = "*" just open a login page
+                }
+                else
+                {
+                    var formObj = document.SWEEntryForm;
+                    formObj.action = url + "/start.swe";
+                    formObj.SWEUserName.value = usr;
+                    formObj.SWEPassword.value = pwd;
+                    var now = new Date();
+                    formObj.SWETS.value = now.getTime();
+                    formObj.submit();    
+                    if (window.localStorage) {
+                        window.localStorage.setItem("ResetApp", 'true');
+                    }
+                    document.querySelector("#msg").innerHTML = "<h3>Logging into " + url + " as " + usr+"</h3>"; // display a message with result url address and user name
+                }  
+            }
+            
+            // bind event listeners
+            var n = document.querySelectorAll("a");
+            for (var i = 0; i<n.length; i++){
+                n[i].addEventListener('click',function(e){
+                    SWEExecuteLogin(e.target);
+                },false);
+            }
+
+        </script>
+
+        <style>
+            .col {
+                display: flex;
+                flex: 1 1 auto;
+                margin: 10px;
+                flex-direction: column;
+                background: white;
+                align-items: center;
+            }
+            .row {
+                display: flex;
+                flex: 1 1 auto;
+                margin: 10px;
+                flex-direction: row;
+                background: silver;
+                justify-content: center;
+            }
+            a,p {
+                margin: 10px;
+                text-decoration: none;
+                align-self: center;
+                color:black;
+            }
+            a:hover {
+                color:lightgrey;
+            }
+        </style>
+    </body>
+</html>

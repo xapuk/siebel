@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="UTF-8"?><?Siebel-Property-Set EscapeNames="true"?><Business_spcService
+ Comments="VB - just my playground for testing - DO NOT MIGRATE"
+ State_spcManagement_spcType="Stateful"
+ Cache="N"
+ Server_spcEnabled="N"
+ Display_spcName="VB Runtime"
+ Inactive="N"
+ Hidden="N"
+ Class="CSSService"
+ Name="VB Runtime"
+><Business_spcService_spcScript
+ Comments=""
+ Parent_spcId="4-2HC5ESG"
+ Parent_spcName="VB Runtime"
+ Parent_spcInactive="N"
+ Inactive="N"
+ Script="var _uslogs = [];_newline"
+ Program_spcLanguage="JS"
+ Name="(declarations)"
+ Sequence="1"
+></Business_spcService_spcScript
+><Business_spcService_spcScript
+ Comments=""
+ Parent_spcId="4-2HC5ESG"
+ Parent_spcName="VB Runtime"
+ Parent_spcInactive="N"
+ Inactive="N"
+ Script="function EvalExpr (Inputs, Outputs)_newline{_newlinevar sExpr = Inputs.GetProperty(&quot;Expr&quot;);_newlinevar sBC = Inputs.GetProperty(&quot;BC&quot;);_newlinevar bc:BusComp;_newline_newlinetry{_newlinebc = TheApplication().ActiveBusObject().GetBusComp(sBC);_newlineOutputs.SetProperty(&quot;Result&quot;, bc.InvokeMethod(&quot;EvalExpr&quot;, sExpr));_newline}catch(e){_newlineOutputs.SetProperty(&quot;Result&quot;, e.toString());_newline}finally{_newlinebc = null;_newline}_newline_newline}_newline"
+ Program_spcLanguage="JS"
+ Name="EvalExpr"
+ Sequence="6"
+></Business_spcService_spcScript
+><Business_spcService_spcScript
+ Comments=""
+ Parent_spcId="4-2HC5ESG"
+ Parent_spcName="VB Runtime"
+ Parent_spcInactive="N"
+ Inactive="N"
+ Script="function EvalScript (Inputs, Outputs)_newline{_newline_newline	var sExpr = Inputs.GetProperty(&quot;Expr&quot;);_newline_newline	try {_newline	_newline		_uslogs = []; // reset logs_newline			_newline		// evaluate_newline		var v = eval(sExpr);_newline		_newline		// return an evaluation result if log function was not used_newline		if (v &amp;&amp; _uslogs.length === 0) {_newline			log(v);_newline		}_newline			_newline	} catch(e) {_newline		log(e.toString(), &quot;\nSource code:\n&quot; + sExpr);_newline	} finally {_newline		Outputs.SetProperty(&quot;Result&quot;, _uslog_usprint());_newline	}_newline_newline}"
+ Program_spcLanguage="JS"
+ Name="EvalScript"
+ Sequence="7"
+></Business_spcService_spcScript
+><Business_spcService_spcScript
+ Comments=""
+ Parent_spcId="4-2HC5ESG"
+ Parent_spcName="VB Runtime"
+ Parent_spcInactive="N"
+ Inactive="N"
+ Script="function Service_usPreInvokeMethod (MethodName, Inputs, Outputs)_newline{_newline	if (MethodName == &quot;EvalExpr&quot;){_newline		EvalExpr(Inputs, Outputs);_newline	}_newline	if (MethodName == &quot;EvalScript&quot;){_newline		EvalScript(Inputs, Outputs);_newline	}_newline	return (CancelOperation);_newline}"
+ Program_spcLanguage="JS"
+ Name="Service_usPreInvokeMethod"
+ Sequence="9"
+></Business_spcService_spcScript
+><Business_spcService_spcScript
+ Comments=""
+ Parent_spcId="4-2HC5ESG"
+ Parent_spcName="VB Runtime"
+ Parent_spcInactive="N"
+ Inactive="N"
+ Script="function _uslog_usobj(o, s) {_newline    var res = &apos;&apos;;_newline    s = (&apos;undefined&apos; === typeof s? &apos;&apos; : s);_newline    /* traditional representation */_newline    res += s + o;_newline    s += &apos;\t&apos;;_newline    /* and also all available keys */_newline    for (var k in o) {_newline        var v = o[k];_newline        if (typeof v === &quot;object&quot;){_newline            res += String.fromCharCode(10) + _uslog_usobj(v, s);_newline        } else {_newline            res += String.fromCharCode(10) + s + k + &apos; = &apos; + v;_newline        }_newline    }_newline    return res;_newline}"
+ Program_spcLanguage="JS"
+ Name="_uslog_usobj"
+ Sequence="2"
+></Business_spcService_spcScript
+><Business_spcService_spcScript
+ Comments=""
+ Parent_spcId="4-2HC5ESG"
+ Parent_spcName="VB Runtime"
+ Parent_spcInactive="N"
+ Inactive="N"
+ Script="function _uslog_usone(o){_newline    var val = &apos;&apos;;_newline    if (&apos;object&apos; === typeof o){ _newline        if(&apos;function&apos; == typeof o.toString &amp;&amp; o.toString() === &apos;[object PropertySet]&apos;) {_newline            val = String.fromCharCode(10) + _uslog_usps(o, &apos;\t&apos;);_newline        }else{_newline            val = String.fromCharCode(10) + _uslog_usobj(o, &apos;\t&apos;);_newline        }_newline    } else {_newline        val = o;_newline    }_newline    return val;_newline}"
+ Program_spcLanguage="JS"
+ Name="_uslog_usone"
+ Sequence="3"
+></Business_spcService_spcScript
+><Business_spcService_spcScript
+ Comments=""
+ Parent_spcId="4-2HC5ESG"
+ Parent_spcName="VB Runtime"
+ Parent_spcInactive="N"
+ Inactive="N"
+ Script="function _uslog_usprint() {_newline    return _uslogs.join(String.fromCharCode(13));_newline}"
+ Program_spcLanguage="JS"
+ Name="_uslog_usprint"
+ Sequence="4"
+></Business_spcService_spcScript
+><Business_spcService_spcScript
+ Comments=""
+ Parent_spcId="4-2HC5ESG"
+ Parent_spcName="VB Runtime"
+ Parent_spcInactive="N"
+ Inactive="N"
+ Script="function _uslog_usps(o, s) {_newline    var res = &apos;&apos;;_newline    s = (&apos;undefined&apos; === typeof s? &apos;&apos; : s);_newline    /* type */_newline    res += s + (o.GetType() ? o.GetType() : &apos;PropertySet&apos;);_newline    /* value */_newline    res += o.GetValue() ? &apos; = &apos; + o.GetValue() : &apos;&apos;;_newline    s += &apos;\t&apos;;_newline    /* properties */_newline    var p = o.GetFirstProperty();_newline    while(p){_newline        res += String.fromCharCode(10) + s + p + &apos; = &apos; + o.GetProperty(p);_newline        p = o.GetNextProperty();_newline    }_newline    /* children */_newline    for (var i = 0; i &lt; o.GetChildCount(); i++){_newline        res += String.fromCharCode(10) + _uslog_usps(o.GetChild(i), s);_newline    }_newline    return res;_newline}"
+ Program_spcLanguage="JS"
+ Name="_uslog_usps"
+ Sequence="5"
+></Business_spcService_spcScript
+><Business_spcService_spcScript
+ Comments=""
+ Parent_spcId="4-2HC5ESG"
+ Parent_spcName="VB Runtime"
+ Parent_spcInactive="N"
+ Inactive="N"
+ Script="function log() {_newline    var res = [];_newline    var d = new Date();_newline    var sd = d.toString();_newline    res.push(sd.substr(sd.length-9, 8) + &apos;:&apos; + d.getMilliseconds());_newline    for (var i = 0; i &lt; arguments.length; i++) {_newline        res.push(_uslog_usone(arguments[i]));_newline    }_newline    _uslogs.push(res.join(&apos;\t|\t&apos;));_newline}"
+ Program_spcLanguage="JS"
+ Name="log"
+ Sequence="8"
+></Business_spcService_spcScript
+></Business_spcService
+>
