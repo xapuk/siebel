@@ -1,4 +1,6 @@
-#Welcome to Inspect Workspace UI
+# Welcome to [Inspect Workspace UI] by xapuk.com
+
+Another usefull bookmarklet which allows to open/inspect any workspace in a a couple of clicks without loosing you current context and much faster.
 
 Text field accepts several formats:
 - an exact workspace name: vbabkin_20200924_d419_1
