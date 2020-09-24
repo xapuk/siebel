@@ -4,7 +4,7 @@ Another usefull bookmarklet which allows to open/inspect any workspace in a a co
 
 Text field accepts several formats:
 - an exact workspace name: vbabkin_20200924_d419_1
-- a search pattern of workspace name: *d419*
+- a search pattern of workspace name: \*d419\*
 - an exact search spec for Repository Workspace BC: [Parent Name] = "Release 21" AND [Created By] = LoginId()
 - leave it empty to search / inspect most recent in-progress workspaces created by active user
 
