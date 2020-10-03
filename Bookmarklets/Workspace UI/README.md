@@ -12,17 +12,11 @@ Hit Enter to search for 10 most recent workspaces matching the provided name/pat
 Hit Ctrl+Enter to inspect the most recent workspaces matching the provided name/pattern/spec.
 
 The most common use scenario I can think of is when you need to inspect / re-inspect your recent in-progress workspace. In that case, just hit Ctrl+Enter upon opening a dialog or double click a bookmark link.
-I assume that you want a dialog to close after successful inspect, so I made it close once you hover over the dialog border.
+You can close a dialog with Esc key, by clicking Close button, clicking outside the dialog or right-click of dialog whitespace.
 
 In order for that UI to work you'll require a backend part as well:
 - download and import [FWK Runtime] business service(BS) if you haven't already
-- publish the BS through application user property [Business Service n]
+- publish the BS through application user property [ClientBusinessService]
 - if you don't want BS to be migrated to higher environments along with repository, just import it as a client-side business service
-- good luck testing the UI on old workspaces which doesn't yet have an application user prop ;)
-
-To do:
-- copy ws name on right-click of link
-- make a ws name in a sucess message a link
-- put a timestamp in the message
 
 Check out http://xapuk.com/ for more information.
