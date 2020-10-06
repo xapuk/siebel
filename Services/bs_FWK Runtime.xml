@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?><?Siebel-Property-Set EscapeNames="true"?><Business_spcService
  Comments="DO NOT MIGRATE"
  State_spcManagement_spcType="Stateful"
- Cache="N"
+ Cache="Y"
  Server_spcEnabled="N"
  Display_spcName="FWK Runtime"
  Inactive="N"
@@ -10,7 +10,7 @@
  Name="FWK Runtime"
 ><Business_spcService_spcScript
  Comments=""
- Parent_spcId="4-2HC5ESG"
+ Parent_spcId="1-G0FUS4"
  Parent_spcName="FWK Runtime"
  Parent_spcInactive="N"
  Inactive="N"
@@ -21,7 +21,7 @@
 ></Business_spcService_spcScript
 ><Business_spcService_spcScript
  Comments=""
- Parent_spcId="4-2HC5ESG"
+ Parent_spcId="1-G0FUS4"
  Parent_spcName="FWK Runtime"
  Parent_spcInactive="N"
  Inactive="N"
@@ -32,7 +32,7 @@
 ></Business_spcService_spcScript
 ><Business_spcService_spcScript
  Comments=""
- Parent_spcId="4-2HC5ESG"
+ Parent_spcId="1-G0FUS4"
  Parent_spcName="FWK Runtime"
  Parent_spcInactive="N"
  Inactive="N"
@@ -43,7 +43,7 @@
 ></Business_spcService_spcScript
 ><Business_spcService_spcScript
  Comments=""
- Parent_spcId="4-2HC5ESG"
+ Parent_spcId="1-G0FUS4"
  Parent_spcName="FWK Runtime"
  Parent_spcInactive="N"
  Inactive="N"
@@ -54,7 +54,7 @@
 ></Business_spcService_spcScript
 ><Business_spcService_spcScript
  Comments=""
- Parent_spcId="4-2HC5ESG"
+ Parent_spcId="1-G0FUS4"
  Parent_spcName="FWK Runtime"
  Parent_spcInactive="N"
  Inactive="N"
@@ -65,7 +65,7 @@
 ></Business_spcService_spcScript
 ><Business_spcService_spcScript
  Comments=""
- Parent_spcId="4-2HC5ESG"
+ Parent_spcId="1-G0FUS4"
  Parent_spcName="FWK Runtime"
  Parent_spcInactive="N"
  Inactive="N"
@@ -76,7 +76,7 @@
 ></Business_spcService_spcScript
 ><Business_spcService_spcScript
  Comments=""
- Parent_spcId="4-2HC5ESG"
+ Parent_spcId="1-G0FUS4"
  Parent_spcName="FWK Runtime"
  Parent_spcInactive="N"
  Inactive="N"
@@ -87,7 +87,7 @@
 ></Business_spcService_spcScript
 ><Business_spcService_spcScript
  Comments=""
- Parent_spcId="4-2HC5ESG"
+ Parent_spcId="1-G0FUS4"
  Parent_spcName="FWK Runtime"
  Parent_spcInactive="N"
  Inactive="N"
@@ -98,7 +98,7 @@
 ></Business_spcService_spcScript
 ><Business_spcService_spcScript
  Comments=""
- Parent_spcId="4-2HC5ESG"
+ Parent_spcId="1-G0FUS4"
  Parent_spcName="FWK Runtime"
  Parent_spcInactive="N"
  Inactive="N"
