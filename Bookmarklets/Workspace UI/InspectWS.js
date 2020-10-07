@@ -1,7 +1,7 @@
 /* 
 @desc Inspect Workspace UI
 @author VB(xapuk.com)
-@version 1.1 2020/10/03
+@version 1.2 2020/10/07
 @requires "FWK Runtime" business service to be published (Application ClientBusinessService usep property)
 @features
     +elements: help text hidden by default, input field with the history, message bar, 3 buttons
@@ -25,6 +25,14 @@
     +close when click outside
     +make it work and test in IE/Edge/Firefox
     +ES6 => Babel => ES5 => Bookmarklet
+@CFixed in 1.2:
+    +print placeholder text on empty call
+    +don't highlight search specs
+    +clear results before next search
+    +fix char limit error
+    +fix hightlight
+    +print user name instead of "my"
+
 */
 (() => {
     if ("undefined" === typeof SiebelApp) {
@@ -48,20 +56,23 @@
         return;
     }
 
+    const placeholder = `{${SiebelApp.S_App.GetUserName()||"my"} recent undelivered workspace}`;
+
     const help = `<i><p>Welcome to Inspect Workspace UI</p>
-    The text field accepts different formats:<br>
+    Text field accepts different formats:<br>
     <ul><li> - an exact workspace name: vbabkin_20200924_d419_1</li>
     <li> - a search pattern of workspace name: *d419*</li>
     <li> - an exact search spec for Repository Workspace BC: [Parent Name] = "Release 21" AND [Created By] = LoginId()</li>
-    <li> - leave it empty to search / inspect most recent undelivered workspaces created by the active user</li></ul>
-    <p>Hit Enter to search for 10 most recent workspaces matching the provided name/pattern/spec and then click one of the workspaces in the list to inspect it. Hit Ctrl+Enter to inspect the most recent workspaces matching the provided name/pattern/spec.</p>
-    <p>If you just want to inspect/re-inspect your recent undelivered workspace, just hit Ctrl+Enter upon opening a dialog or double click a bookmark link.</p>
-    <p>Right-click on workspace name will copy the name or right-click whitespace to close the dialog.</p>
-    <p>Check out <a href="http://xapuk.com/index.php?topic=125">http://xapuk.com/</a> for details.</p></i>`;
+    <li> - leave it empty to search / inspect most recent undelivered workspaces created by active user</li></ul>
+    <p>Hit Enter to search for 10 most recent workspaces matching the provided name/pattern/spec and then click one of the workspaces in the list to inspect it.</p>
+    <p>Hit Ctrl+Enter to inspect the most recent workspaces matching the provided name/pattern/spec.</p>
+    <p>If you want to inspect/re-inspect your recent undelivered workspace, just hit Ctrl+Enter upon opening a dialog or double click a bookmark link.</p>
+    <p>Right click on workspace name will copy the name or right-click whitespace to close the dialog.</p>
+    <p>Check out <a href="http://xapuk.com/index.php?topic=125" target="_blank">http://xapuk.com/</a> for details.</p></i>`;
 
     const html = `<div title="Inspect Workspace">
             <span id = "${func}Help" style = "display:none">${help}</span>
-            <input placeholder = "<my recent undelivered workspace>" type="text" id = "${func}" list="${func}History" autocomplete="off">
+            <input placeholder = "${placeholder}" type="text" id = "${func}" list="${func}History" autocomplete="off">
             <p id = "${func}Msg"></p>
             <ul id="${func}List"></ul>
             <datalist id = "${func}History"></datalist>
@@ -73,7 +84,7 @@
                     margin-left: 15px;
                 }
                 #${func}Help i{
-                    font-size: 0.8rem;
+                    font-size: 0.9rem;
                 }
                 .${func} li {
                     list-style-type: disc;
@@ -158,10 +169,14 @@
 
     function Run(bInspect, name) {
         name = name ? name : $('#' + func).val();
-        // don't accept empty filters
+        // don't accept specs shorter then 3 chars
         if (name && name.replace(/\*/gm, "").length < 3) {
-            $d.find(id + "Msg").html("Value can't be shorter then 3 characters!");
+            printMsg(`Value can't be shorter then 3 characters! ${name}`);
             return;
+        }
+        //clean up results before search
+        if (!bInspect) {
+            $d.find(id + "List").empty();
         }
         // save last query
         if (name) {
@@ -213,16 +228,17 @@
                 }
             }
         };
-        printMsg(`${bInspect?'Inspecting':'Searching for'} a workspace: ${name||'*'}`);
+        printMsg(`${bInspect?'Inspecting':'Searching for'} workspace: ${name||placeholder}`);
         service.InvokeMethod("InspectWS", ps, config);
     }
 
     function highlightText(pattern, value) {
-        if (pattern && value) {
+        if (pattern && value && !pattern.match(/\[.*\]/gm)) {
             const patterns = pattern.split("*");
             let i, lastIndex = -1;
             value = patterns.reduce((res, p) => {
-                if (p && (i = res.indexOf(p, lastIndex))) {
+                let i = res.indexOf(p, lastIndex);
+                if (p && i > -1) {
                     res = `${res.substr(0, i)}<b>${p}</b>${res.substr(i + p.length)}`;
                     lastIndex = i;
                 }
@@ -233,7 +249,7 @@
     }
 
     function printMsg(txt) {
-        txt = (new Date).toLocaleTimeString() + ' > ' + txt;
+        txt = (new Date).toLocaleTimeString() + ' >> ' + txt;
         // limit a message stack to 3 items
         aMsg.push(txt);
         if (aMsg.length > 3) {
