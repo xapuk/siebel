@@ -20,3 +20,18 @@ In order for that UI to work you'll require a backend part as well:
 - if you don't want BS to be migrated to higher environments along with repository, just import it as a client-side business service
 
 Check out http://xapuk.com/ for more information.
+
+# Version history
+@Fixed in 1.2:
+    +print placeholder text on empty call
+    +don't highlight search specs
+    +clear results before next search
+    +fix char limit error
+    +fix hightlight
+    +print user name instead of "my"
+@Fixed in 1.3:
+    +placeholder text color
+    +<> in placeholder text
+    +when searching for exact ws name, shouldn't highlight it
+    +link click doesn't work if clicked on highlighted part (<b>)
+    +don't close on whitespace click

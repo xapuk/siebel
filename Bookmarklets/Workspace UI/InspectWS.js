@@ -1,7 +1,7 @@
 /* 
 @desc Inspect Workspace UI
 @author VB(xapuk.com)
-@version 1.2 2020/10/07
+@version 1.3 2020/10/08
 @requires "FWK Runtime" business service to be published (Application ClientBusinessService usep property)
 @features
     +elements: help text hidden by default, input field with the history, message bar, 3 buttons
@@ -25,14 +25,19 @@
     +close when click outside
     +make it work and test in IE/Edge/Firefox
     +ES6 => Babel => ES5 => Bookmarklet
-@CFixed in 1.2:
+@Fixed in 1.2:
     +print placeholder text on empty call
     +don't highlight search specs
     +clear results before next search
     +fix char limit error
     +fix hightlight
     +print user name instead of "my"
-
+@Fixed in 1.3:
+    +placeholder text color
+    +<> in placeholder text
+    +when searching for exact ws name, shouldn't highlight it
+    +link click doesn't work if clicked on highlighted part (<b>)
+    +don't close on whitespace click
 */
 (() => {
     if ("undefined" === typeof SiebelApp) {
@@ -56,7 +61,7 @@
         return;
     }
 
-    const placeholder = `{${SiebelApp.S_App.GetUserName()||"my"} recent undelivered workspace}`;
+    const placeholder = `${SiebelApp.S_App.GetUserName()||"my"} recent undelivered workspace`;
 
     const help = `<i><p>Welcome to Inspect Workspace UI</p>
     Text field accepts different formats:<br>
@@ -72,7 +77,7 @@
 
     const html = `<div title="Inspect Workspace">
             <span id = "${func}Help" style = "display:none">${help}</span>
-            <input placeholder = "${placeholder}" type="text" id = "${func}" list="${func}History" autocomplete="off">
+            <input placeholder = "<${placeholder}>" type="text" id = "${func}" list="${func}History" autocomplete="off">
             <p id = "${func}Msg"></p>
             <ul id="${func}List"></ul>
             <datalist id = "${func}History"></datalist>
@@ -80,10 +85,13 @@
                 .${func} input {
                     width: 100%!Important;
                 }
-                #${func}List{
+                #${func}::placeholder {
+                    color: lightslategrey;
+                }
+                #${func}List {
                     margin-left: 15px;
                 }
-                #${func}Help i{
+                #${func}Help i {
                     font-size: 0.9rem;
                 }
                 .${func} li {
@@ -142,15 +150,11 @@
                             $d.find("a").show();
                         });
                     }
-                } else if (["INPUT", "A", "BUTTON"].indexOf(scope.nodeName) === -1) {
-                    // close the applet on right-click of whitespace
-                    $this.dialog("close");
-                    event.preventDefault();
-                    event.stopPropagation();
                 }
             }).click((e) => {
-                if (e.target.nodeName === "A" && $(e.target).parents(id + "List").length) {
-                    Run(true, $(e.target).text());
+                var a = $(e.target).closest("a");
+                if (a.length && a.closest(id + "List").length) {
+                    Run(true, a.text());
                 }
             }).find(id).keydown((event) => {
                 if (event.keyCode === 13) {
@@ -171,7 +175,7 @@
         name = name ? name : $('#' + func).val();
         // don't accept specs shorter then 3 chars
         if (name && name.replace(/\*/gm, "").length < 3) {
-            printMsg(`Value can't be shorter then 3 characters! ${name}`);
+            printMsg(`Value should be longer then 3 characters! ${name}`);
             return;
         }
         //clean up results before search
@@ -228,12 +232,12 @@
                 }
             }
         };
-        printMsg(`${bInspect?'Inspecting':'Searching for'} workspace: ${name||placeholder}`);
+        printMsg(`${bInspect?'Inspecting':'Searching for'} workspace: ${name||"&lt;" + placeholder + "&gt;"}`);
         service.InvokeMethod("InspectWS", ps, config);
     }
 
     function highlightText(pattern, value) {
-        if (pattern && value && !pattern.match(/\[.*\]/gm)) {
+        if (pattern && value && !pattern.match(/\[.*\]/gm) && pattern.replace(/\*/gm, "").length < value.length) {
             const patterns = pattern.split("*");
             let i, lastIndex = -1;
             value = patterns.reduce((res, p) => {
