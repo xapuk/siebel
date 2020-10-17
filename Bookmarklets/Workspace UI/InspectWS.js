@@ -41,8 +41,9 @@
 @Fixed in 1.4
     +change to the layout
     +fixed empty call problem
-    +help text changes
+    +Instruction changes
 */
+
 (() => {
     if ("undefined" === typeof SiebelApp) {
         alert("It works only in Siebel OUI session!");
@@ -68,7 +69,7 @@
     const placeholder = `${SiebelApp.S_App.GetUserName()||"my"} recent undelivered workspace`;
 
     const help = `<i><p>Welcome to Inspect Workspace UI</p>
-    Text field accepts different formats:<br>
+    Text field accepts several formats:<br>
     <ul><li> - an exact workspace name: vbabkin_20200924_d419_1</li>
     <li> - a search pattern of workspace name: *d419*</li>
     <li> - an exact search spec for Repository Workspace BC: [Parent Name] = "Release 21" AND [Created By] = LoginId()</li>
@@ -76,7 +77,7 @@
     <p>Hit Enter to search for 10 most recent workspaces matching the provided name/pattern/spec and then click one of the workspaces in the list to inspect it.</p>
     <p>Hit Ctrl+Enter to inspect the most recent workspaces matching the provided name/pattern/spec.</p>
     <p>If you want to inspect/re-inspect your recent undelivered workspace, just hit Ctrl+Enter upon opening a dialog or double click a bookmark link.</p>
-    <p>Right click on workspace name will copy the name.</p>
+    <p>Right click on workspace name to copy it.</p>
     <p>Click anywhere outside of the dialog to close it.</p>
     <p>Check out <a href="http://xapuk.com/index.php?topic=125" target="_blank">http://xapuk.com/</a> for details.</p></i>`;
 
@@ -102,6 +103,9 @@
                 .${func} li {
                     list-style-type: disc;
                     margin-left: 30px;
+                }
+                #${func}Msg {
+                    border-top:1px solid;
                 }
             </style>
         </div>`;
@@ -219,7 +223,7 @@
                         sWorkspaces = psRS.GetProperty("Workspaces");
                         if (!sRes) {
                             if (inputSet.GetProperty("Inspect") == "Y") {
-                                sRes = `Workspace <b><a href='#'>${sWorkspaces||"?"}</a></b> inspected sucessfuly!`;
+                                sRes = `Workspace <b><a href='#'>${sWorkspaces||"?"}</a></b> inspected sucessfully!`;
                             } else if (sWorkspaces) {
                                 // print a list of workspaces
                                 $d.find(id + "List").empty();
@@ -237,7 +241,7 @@
                 }
             }
         };
-        printMsg(`${bInspect?'Inspecting':'Searching for'} workspace: ${name||"&lt;" + placeholder + "&gt;"}`);
+        printMsg(`${bInspect?'Inspecting':'Searching for'} workspace: ${name||placeholder}`);
         service.InvokeMethod("InspectWS", ps, config);
     }
 
