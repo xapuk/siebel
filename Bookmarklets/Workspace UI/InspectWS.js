@@ -1,7 +1,7 @@
 /* 
 @desc Inspect Workspace UI
 @author VB(xapuk.com)
-@version 1.3 2020/10/08
+@version 1.5 2020/11/08
 @requires "FWK Runtime" business service to be published (Application ClientBusinessService usep property)
 @features
     +elements: help text hidden by default, input field with the history, message bar, 3 buttons
@@ -41,7 +41,11 @@
 @Fixed in 1.4
     +change to the layout
     +fixed empty call problem
-    +Instruction changes
+    +instruction changes
+@fixed in 1.5
+    +remove "workspace" from messages so inspecting latest workspace wording make sence
+    +search results shouldn't be empty - when inspecting should spool a ws name, while search/inspect in progress put ...
+    +more instructions
 */
 
 (() => {
@@ -81,15 +85,16 @@
     <p>Click anywhere outside of the dialog to close it.</p>
     <p>Check out <a href="http://xapuk.com/index.php?topic=125" target="_blank">http://xapuk.com/</a> for details.</p></i>`;
 
-    const html = `<div title="Inspect Workspace">
+    const html = `<div title="Inspect workspace">
             <span id = "${func}Help" style = "display:none">${help}</span>
             <input placeholder = "<${placeholder}>" type="text" id = "${func}" list="${func}History" autocomplete="off">
-            <ul id="${func}List"></ul>
+            <ul id="${func}List">Provide a search criteria above and run [Search] to see a list of available workspaces<br>and/or run [Inspect] directly to inspect first most recent workspace matching the criteria</ul>
             <p id = "${func}Msg"></p>
             <datalist id = "${func}History"></datalist>
             <style>
                 .${func} input {
                     width: 100%!Important;
+                    margin-bottom: 10px;
                 }
                 #${func}::placeholder {
                     color: lightslategrey;
@@ -105,7 +110,8 @@
                     margin-left: 30px;
                 }
                 #${func}Msg {
-                    border-top:1px solid;
+                    border-top: 1px solid lightslategrey;
+                    padding-top: 5px;
                 }
             </style>
         </div>`;
@@ -180,8 +186,8 @@
         }
     });
 
-    function Run(bInspect, name) {
-        name = name ? name : $('#' + func).val();
+    function Run(bInspect, inpname) {
+        const name = inpname ? inpname : $('#' + func).val();
         // don't accept specs shorter then 3 chars
         if (name && name.replace(/\*/gm, "").length < 3) {
             printMsg(`Value should be longer then 3 characters! ${name}`);
@@ -222,17 +228,21 @@
                         sRes = psRS.GetProperty("Result");
                         sWorkspaces = psRS.GetProperty("Workspaces");
                         if (!sRes) {
-                            if (inputSet.GetProperty("Inspect") == "Y") {
-                                sRes = `Workspace <b><a href='#'>${sWorkspaces||"?"}</a></b> inspected sucessfully!`;
-                            } else if (sWorkspaces) {
-                                // print a list of workspaces
-                                $d.find(id + "List").empty();
-                                let aWorkspaces = sWorkspaces.split(",");
-                                aWorkspaces.forEach((w) => $d.find(id + "List").append(`<li><a href='#'>${highlightText(name, w)}</a></li>`));
-                                if (aWorkspaces.length == iLimit) {
-                                    $d.find(id + "List").append(`<p><i>${iLimit} most recent workspaces are shown.</i></p>`);
+                            if (bInspect) {
+                                sRes = `Workspace <b><a href='#'>${sWorkspaces||"?"}</a></b> inspected successfully!`;
+                            } else {
+                                if (sWorkspaces) {
+                                    // print a list of workspaces
+                                    $d.find(id + "List").empty();
+                                    let aWorkspaces = sWorkspaces.split(",");
+                                    aWorkspaces.forEach((w) => $d.find(id + "List").append(`<li><a href='#'>${highlightText(name, w)}</a></li>`));
+                                    if (aWorkspaces.length == iLimit) {
+                                        $d.find(id + "List").append(`<p><i>${iLimit} most recent workspaces are shown.</i></p>`);
+                                    }
                                 }
                             }
+                        } else if (sRes.indexOf("No workspace found") > -1) {
+                            $d.find(id + "List").html(`Workspace not found, please provide a valid search criteria and run [Search] again...`);
                         }
                     }
                 }
@@ -241,7 +251,7 @@
                 }
             }
         };
-        printMsg(`${bInspect?'Inspecting':'Searching for'} workspace: ${name||placeholder}`);
+        printMsg(`${bInspect?'Inspecting':'Searching for'} ${name||placeholder}`);
         service.InvokeMethod("InspectWS", ps, config);
     }
 
