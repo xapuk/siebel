@@ -88,7 +88,7 @@
     const html = `<div title="Inspect workspace">
             <span id = "${func}Help" style = "display:none">${help}</span>
             <input placeholder = "<${placeholder}>" type="text" id = "${func}" list="${func}History" autocomplete="off">
-            <ul id="${func}List">Provide a search criteria above and run [Search] to see a list of available workspaces<br>and/or run [Inspect] directly to inspect first most recent workspace matching the criteria</ul>
+            <ul id="${func}List">Provide a search criteria above and run [Search] to see a list of available workspaces<br>and/or run [Inspect] directly to inspect the most recent workspace matching the criteria</ul>
             <p id = "${func}Msg"></p>
             <datalist id = "${func}History"></datalist>
             <style>
