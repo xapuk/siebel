@@ -1,7 +1,7 @@
 /* 
 @desc advanced AboutView plugin
 @author VB(xapuk.com)
-@version 1 2018/07/10
+@version 1.3.1 2021/01/30
 */
 
 var id = "SiebelAboutView";
@@ -19,7 +19,7 @@ var tmp = ''+
   '<% } %>'+
   '<b>Applets(<%= Object.keys(v.GetAppletMap()).length %>) / BusComps(<%= Object.keys(SiebelApp.S_App.GetActiveBusObj().GetBCMap()).length %>):</b><br>'+
   '<ul style="padding-left:20px">'+
-    '<% for(applet in v.GetAppletMap()) { var a = v.GetAppletMap()[applet]; var bc = a.GetBusComp(); var r = bc.GetCurRowNum() <= bc.GetRecordSet().length?bc.GetRecordSet()[bc.GetCurRowNum()-1]:{}; var os = "SiebelApp.S_App.GetActiveView().GetAppletMap()[\'" + applet + "\']"; var $ds = $("#" + a.GetFullId()); %>'+
+    '<% for(applet in v.GetAppletMap()) { var a = v.GetAppletMap()[applet]; var bc = a.GetBusComp(); var r = bc.GetSelection() < bc.GetRecordSet().length?bc.GetRecordSet()[bc.GetSelection()]:{}; var os = "SiebelApp.S_App.GetActiveView().GetAppletMap()[\'" + applet + "\']"; var $ds = $("#" + a.GetFullId()); %>'+
       '<li>'+
         '<a data-target="controls"><b style="<% if($ds.is(":hidden")){ %>font-style:italic;<% } if(a===v.GetActiveApplet()){ %>text-decoration:underline<% } %>"><%= applet %></b></a> / '+ 
         '<a data-target="fields"><b><%= bc.GetName() %></b></a>'+
@@ -33,7 +33,7 @@ var tmp = ''+
             '<b>Toggle:</b> <a><%= a.GetToggleApplet() %></a><br/>'+
           '<% } %>'+
           '<b>Object Selector:</b> <a><%= os %></a><br>'+
-          '<b>DOM Selector:</b> <a>$(\"<%= $ds.selector %>\")</a><br>'+
+          '<b>DOM Selector:</b> <a>$(\"#<%= a.GetFullId() %>\")</a><br>'+
           '<b>Controls (<%= Object.keys(a.GetControls()).length %>): </b>'+
           '<ul>'+
           '<% for(control in a.GetControls()) { var c = a.GetControls()[control]; var $cds = $ds.find("[name=\'" + c.GetInputName() + "\']") %>'+
@@ -55,7 +55,7 @@ var tmp = ''+
                 '<b>Type:</b> <a><%= c.GetUIType() %></a> <br>'+ // to decode value trhough SiebelJS.Dependency("SiebelApp.Constants");
                 '<b>Input:</b> <a><%= c.GetInputName() %></a><br>'+
                 '<b>Object Selector:</b> <a><%= os+".GetControls()[\'" + control + "\']" %></a><br>'+
-                '<b>DOM Selector:</b> <a>$(\"<%= $cds.selector %>\")</a><br>'+
+                '<b>DOM Selector:</b> <a>$(\"#<%= a.GetFullId() %> [name=\'<%= c.GetInputName() %>\']")</a><br>'+
                 '<% if(c.GetMethodName()){ %>'+
                   '<b>Method:</b> <a><%= c.GetMethodName() %></a><br>'+
                 '<% } %>'+
@@ -143,6 +143,10 @@ function SiebelAboutView(){
 				$d.dialog('close');
 				eval(str);
 			});
+			// close on click outside
+			$(".ui-widget-overlay").click(function(){
+			    $d.dialog('close');
+			});
         },
         close: function(){
             $(this).dialog('destroy').remove();
@@ -206,9 +210,8 @@ function copy(scope){
 if ("undefined" === typeof SiebelApp || "undefined" === typeof SiebelApp.S_App){
 	alert("Please launch Siebel application first.");
 }else if ("undefined" === typeof EJS){
-    var src = "3rdParty/ejs/ejs_production";
+	var src = "3rdParty/ejs/ejs_production";
 	requirejs([src], SiebelAboutView, function(){alert("Failed to load EJS library ! \n" + src);});
 }else{
-    SiebelAboutView();
+	SiebelAboutView();
 }
- 
